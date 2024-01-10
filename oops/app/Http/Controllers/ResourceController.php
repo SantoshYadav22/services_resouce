@@ -11,7 +11,7 @@ class ResourceController extends Controller
      */
     public function index()
     {
-        return 'wllo';
+        return 'hello santosh';
     }
 
     /**

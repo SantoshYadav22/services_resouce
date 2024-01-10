@@ -27,7 +27,7 @@ Route::get('post/{id}', [App\Http\Controllers\ResourceController::class, 'show']
 // Create a new post
 Route::post('post', [App\Http\Controllers\ResourceController::class, 'store']);
 
-// Update a post
+// Update a posts
 Route::put('post', [App\Http\Controllers\ResourceController::class, 'store']);
 
 // Delete a post
