@@ -36,10 +36,15 @@
     <tbody>
     @foreach($list as $key => $value)
         <tr>
+            @php $tank_list = array('Iron Behemoth','Thunderclaw','Shadow Sentinel'); @endphp
             <td>{{ $value->id }}</td>
             <td>{{ $value->name }}</td>
             <td>{{ $value->email }}</td>
-            <td>{{ $value->shark_level }}</td>
+            @foreach($tank_list as $Key => $list)
+                @if($Key + 1 == $value->shark_level )
+                <td>{{ $list }}</td>
+                @endif
+            @endforeach
 
             <td>
                 {{ Form::open(array('url' => 'tanks/' . $value->id, 'class' => 'pull-right')) }}
