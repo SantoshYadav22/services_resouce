@@ -1,8 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
+use App\Models\Tank;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
+use Collective\Html\HtmlFacade as HTML;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
+
 
 class ResourceController extends Controller
 {
@@ -11,7 +18,10 @@ class ResourceController extends Controller
      */
     public function index()
     {
-        return 'hello santosh';
+        $list = Tank::all();
+        
+        return View::make('Resources.index')
+            ->with('list', $list);
     }
 
     /**
@@ -19,39 +29,83 @@ class ResourceController extends Controller
      */
     public function create()
     {
-        //
+        return View::make('Resources.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        //
+        
+        $rules = array(
+            'name'       => 'required',
+            'email'      => 'required|email',
+            'shark_level' => 'required|numeric'
+        );
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return Redirect::to('tanks/create')
+                ->withErrors($validator)
+                ->withInput($request->except('password'));
+        } else {
+            // store
+            $tank = new Tank;
+            $tank->name       = $request->get('name');
+            $tank->email      = $request->get('email');
+            $tank->shark_level = $request->get('shark_level');
+            $tank->save();
+
+            // redirect
+            Session::flash('message', 'Successfully created tanks!');
+            return Redirect::to('tanks');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(string $id)
     {
-        //
+        $tank = Tank::find($id);
+
+        return View::make('Resources.show')
+            ->with('tanks', $tank);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(string $id)
     {
-        //
+        $tank = Tank::find($id);
+
+        return View::make('Resources.edit')
+            ->with('tanks', $tank);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, string $id)
     {
-        //
+        $rules = array(
+            'name'       => 'required',
+            'email'      => 'required|email',
+            'shark_level' => 'required|numeric'
+        );
+        $validator = Validator::make($request->all(), $rules);
+
+        // process the login
+        if ($validator->fails()) {
+            return Redirect::to('tanks/' . $id . '/edit')
+                ->withErrors($validator)
+                ->withInput($request->except('password'));
+        } else {
+            // store
+            $tank = Tank::find($id);
+            $tank->name       = $request->get('name');
+            $tank->email      = $request->get('email');
+            $tank->shark_level = $request->get('shark_level');
+            $tank->save();
+
+            // redirect
+            Session::flash('message', 'Successfully updated tank!');
+            return Redirect::to('tanks');
+        }
     }
 
     /**
@@ -59,6 +113,12 @@ class ResourceController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $tank = Tank::find($id);
+        $tank->delete();
+
+        // redirect
+        Session::flash('message', 'Successfully deleted the tank!');
+        return Redirect::to('tanks');
+
     }
 }

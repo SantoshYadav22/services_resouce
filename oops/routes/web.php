@@ -19,3 +19,4 @@ Route::get('/', function () {
 
 
 Route::get('test',[App\Http\Controllers\OopController::class, 'doOops']);
+Route::resource('tanks', 'App\Http\Controllers\ResourceController');
